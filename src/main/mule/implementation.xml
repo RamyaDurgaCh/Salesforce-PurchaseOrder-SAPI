@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="implementationFlow" doc:id="2567f88a-9670-4436-8e62-a6e7d8476858" >
+		<logger level="INFO" doc:name="Logger" doc:id="d692dcf2-5178-4e4c-9d79-f9076809ad5d" message="starting health flow"/>
+		<salesforce:get-server-timestamp doc:name="Get server timestamp" doc:id="7f02b1e0-6d2e-4d5c-9d5e-90106268d2f4" config-ref="Salesforce_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="074ee3de-b866-468c-9a7e-d3c2b2aa65fe" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"TimeStamp": payload,
+	"status": "Running"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="6c39f516-8bbb-4da5-9455-f94a0885761b" message="Ending Health Flow"/>
+	</flow>
+	<flow name="purcahseOrderImplementationFlow" doc:id="c4ef02dc-0766-4c5a-b3b6-91df13f659f6" >
+		<logger level="INFO" doc:name="Logger" doc:id="acf84523-03e6-48cd-ae3e-5bb07db03523" message="started purcahseOrder Implementation Flow"/>
+		<ee:transform doc:name="Transform Message" doc:id="962095ae-24a1-4c4d-98d2-50a782d3bc44" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+    [{
+        "amount__c": payload.amount,
+        "buyerName__c": payload.buyerName,
+        "email__c": payload.email,
+        "messageId__c": payload.messageId,
+        "messageType__c": payload.messageType,
+        "price_c": payload.rollNumber,
+        "productName__c": payload.productName,
+        "Name": payload.purchaseOrderName,
+        "quantity__c": payload.quantity,
+        "recieverId__c": payload.recieverId,
+        "sellerName__c": payload.sellerName,
+        "sender__c": payload.senderId
+        
+    }]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:upsert doc:name="Upsert" doc:id="94ab265b-8459-49c8-842a-4ded851d16f1" config-ref="Salesforce_Config" objectType="purcahseOrder__c" externalIdFieldName="Id"/>
+		<ee:transform doc:name="Transform Message" doc:id="b2fc60da-5e63-488e-8db4-5b8c89305843">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

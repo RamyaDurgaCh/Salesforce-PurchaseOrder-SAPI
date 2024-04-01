@@ -1,0 +1,17 @@
+%dw 2.0
+
+type auto_c4ef02dc_0766_4c5a_b3b6_91df13f659f6_Output_Payload = {
+  senderId: String, 
+  amount: Number, 
+  quantity: Number, 
+  messageType: String, 
+  price: Number, 
+  sellerName: String, 
+  messageId: String, 
+  recieverId: String, 
+  buyerName: String, 
+  productName: String, 
+  email: String, 
+  _?: Any
+}
+
